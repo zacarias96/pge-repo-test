@@ -1,0 +1,326 @@
+{
+	"info": {
+		"_postman_id": "6c73a6ec-4036-4325-b070-688ef4fe75c2",
+		"name": "SCC - PGE",
+		"description": "Coleção de Requisições do Sistema de Cadastro de Contribuintes gerenciado pela Procuradoria Geral do Estado do Ceará PGE-CE.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39062162"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Realiza Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status Code = 200', function () {",
+									"    pm.expect(pm.response.code).to.equal(200);",
+									"})",
+									"",
+									"pm.test('O Conteúdo do body é do tipo JSON', function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.be.oneOf(['application/json', 'application/json; charset=utf-8']);",
+									"})",
+									"",
+									"pm.test('Response contém o campo \\'token\\' e não é uma string vazia', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.token).to.exist;",
+									"    pm.expect(responseData.token).to.be.a('string').and.to.have.lengthOf.at.least(1, 'Token should not be empty');",
+									"})",
+									"",
+									"//Salva o token na Collection para usar nas outras requisições",
+									"let response = pm.response.json()",
+									"pm.collectionVariables.set('x-access-token', response.token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"usuario\": \"admin\",\r\n    \"senha\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/login",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Incorreto",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status Code = 401', function () {\r",
+									"    pm.expect(pm.response.code).to.equal(401);\r",
+									"})\r",
+									"\r",
+									"pm.test('O Conteúdo do body é do tipo JSON', function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.be.oneOf(['application/json', 'application/json; charset=utf-8']);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response contém o campo \\'erro\\' valida a mensagem de erro', function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.erro).to.exist;\r",
+									"    pm.expect(responseData.erro).to.be.a('string').and.to.equal(\"Usuário ou senha inválidos\");\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"usuario\": \"teste001\",\r\n    \"senha\": \"teste001\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/login",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contribuinte",
+			"item": [
+				{
+					"name": "Cadastrar Contribuinte",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status Code = 201', function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"})\r",
+									"\r",
+									"pm.test('O Conteúdo do body é do tipo JSON', function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.be.oneOf(['application/json', 'application/json; charset=utf-8']);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response contém o campo \\'mensagem\\' e valida a mensagem de exito', function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.mensagem).to.exist;\r",
+									"    pm.expect(responseData.mensagem).to.be.a('string').and.to.equal(\"Contribuinte cadastrado com sucesso\");\r",
+									"})\r",
+									"\r",
+									"pm.collectionVariables.set(\"cadCPF\", Math.floor(Math.random() * 500));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true,
+							"connection": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{x-access-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"cpf\": \"{{cadCPF}}\",\r\n\"nome\": \"Teste da Silva\",\r\n\"data_nascimento\": \"1990-01-01\",\r\n\"nome_mae\": \"Maria da Silva\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/contribuintes",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"contribuintes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obter Inscrições por CPF",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Altera o CPF para pesquisa\r",
+									"pm.collectionVariables.set('cpf', 12345678900)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status Code = 200', function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"})\r",
+									"\r",
+									"pm.test('O Conteúdo do body é do tipo JSON', function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.be.oneOf(['application/json', 'application/json; charset=utf-8']);\r",
+									"})\r",
+									"\r",
+									"pm.test('Response contém os campos obrigatórios no retorno', function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.cpf).to.exist;\r",
+									"    pm.expect(responseData.data_inscricao).to.exist;\r",
+									"    pm.expect(responseData.data_prazo).to.exist;\r",
+									"    pm.expect(responseData.descricao).to.exist;\r",
+									"    pm.expect(responseData.numero).to.exist;\r",
+									"    pm.expect(responseData.valor).to.exist;\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "{{x-access-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base-url}}/inscricoes/{{cpf}}",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"inscricoes",
+								"{{cpf}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "x-access-token",
+			"value": "http://testeqa.pge.ce.gov.br"
+		},
+		{
+			"key": "base-url",
+			"value": "http://testeqa.pge.ce.gov.br",
+			"type": "string"
+		},
+		{
+			"key": "base-url-secure",
+			"value": "https://testeqa.pge.ce.gov.br",
+			"type": "string"
+		},
+		{
+			"key": "cpf",
+			"value": "12345678900",
+			"type": "string"
+		},
+		{
+			"key": "cadCPF",
+			"value": "FFFF",
+			"type": "string"
+		}
+	]
+}

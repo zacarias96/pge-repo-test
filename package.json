@@ -1,0 +1,18 @@
+{
+    "name": "pge-scc-tests",
+    "version": "1.0.0",
+    "description": "Projeto para exemplo de código de teste automatizado de API em Cypress.",
+    "scripts": {
+        "cy:open": "cypress open",
+        "test": "cypress run"
+    },
+    "keywords": [
+        "Cypress",
+        "PGE",
+        "SCC"
+    ],
+    "author": "Lucas Haiaiel Araújo Zacarias <lucas.haiaiel@gmail.com>",
+    "devDependencies": {
+        "cypress": "^13.15.0"
+    }
+}
